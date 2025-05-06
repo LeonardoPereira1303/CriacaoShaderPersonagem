@@ -1,10 +1,8 @@
-using System.Collections;
 using UnityEngine;
 
 public class ShaderActivate : MonoBehaviour
 {
     public Material shaderMaterial;
-    public float effectDuration = 3f;
 
     private Material originalMaterial;
     private Renderer objRenderer;
@@ -18,14 +16,6 @@ public class ShaderActivate : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            ApplyShaderEffect();
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -34,18 +24,24 @@ public class ShaderActivate : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            RestoreOriginalMaterial();
+        }
+    }
+
     private void ApplyShaderEffect()
     {
         if (objRenderer != null && shaderMaterial != null)
         {
             objRenderer.material = shaderMaterial;
-            StartCoroutine(RestoreMaterialAfterDelay());
         }
     }
 
-    private IEnumerator RestoreMaterialAfterDelay()
+    private void RestoreOriginalMaterial()
     {
-        yield return new WaitForSeconds(effectDuration);
         if (objRenderer != null && originalMaterial != null)
         {
             objRenderer.material = originalMaterial;
